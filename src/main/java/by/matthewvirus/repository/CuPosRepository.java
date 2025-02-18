@@ -22,7 +22,7 @@ public class CuPosRepository {
     private static final String lastDocNumSQL = "select max(skno_number) as last_doc from cash_voucher where lenta_id=?";
     private static final String lastDocStatusSQL = "select status as status from cash_voucher where skno_number=(select max(skno_number) from cash_voucher where lenta_id=?)";
     private static final String lastDocUIDSQL = "select doc_uid as doc_uid from cash_voucher where skno_number=(select max(skno_number) from cash_voucher where lenta_id=?)";
-    private static final String totalPDSCountSQL = "select count(*) as total_PD_count from cash_voucher where lenta_id=? and voucher_type=1";
+    private static final String totalPDSCountSQL = "select count(*) as total_PD_count from cash_voucher where lenta_id=? and voucher_type=1 and status=1";
 
     public CuPosRepository(Connection conn, int lentaId) {
         this.conn = conn;
