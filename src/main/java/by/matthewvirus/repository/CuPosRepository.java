@@ -19,9 +19,9 @@ public class CuPosRepository {
     private static final String shiftCloseTSQL = "select doc_date close_t from cash_voucher where lenta_id=? and voucher_type=6";
     private static final String shiftCloseTIsntClosedSQL = "select doc_date as close_t from cash_voucher where skno_number=(select max(skno_number) from cash_voucher where lenta_id=?)";
     private static final String shiftUIDSQL = "select doc_uid as shift_uid from cash_voucher where lenta_id=? and voucher_type=6";
-    private static final String lastDocNumSQL = "select max(skno_number) as last_doc from cash_voucher where lenta_id=?";
-    private static final String lastDocStatusSQL = "select status as status from cash_voucher where skno_number=(select max(skno_number) from cash_voucher where lenta_id=?)";
-    private static final String lastDocUIDSQL = "select doc_uid as doc_uid from cash_voucher where skno_number=(select max(skno_number) from cash_voucher where lenta_id=?)";
+    private static final String lastDocNumSQL = "select max(skno_number) as last_doc from cash_voucher where lenta_id=? and voucher_type=1";
+    private static final String lastDocStatusSQL = "select status as status from cash_voucher where skno_number=(select max(skno_number) from cash_voucher where lenta_id=? and voucher_type=1)";
+    private static final String lastDocUIDSQL = "select doc_uid as doc_uid from cash_voucher where skno_number=(select max(skno_number) from cash_voucher where lenta_id=?) and lenta_id=?";
     private static final String totalPDSCountSQL = "select count(*) as total_PD_count from cash_voucher where lenta_id=? and voucher_type=1 and status=1";
 
     public CuPosRepository(Connection conn, int lentaId) {
@@ -110,6 +110,7 @@ public class CuPosRepository {
         String lastDocUID = " ";
         try (PreparedStatement statement = conn.prepareStatement(lastDocUIDSQL)) {
             statement.setInt(1, lentaId);
+            statement.setInt(2, lentaId);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 lastDocUID = resultSet.getString(1);
@@ -157,7 +158,7 @@ public class CuPosRepository {
                 getShiftOpenTime(),
                 getShiftCloseTime(),
                 getShiftUID(),
-                isShiftClosed ? 3 : 1,
+                isShiftClosed ? 3 : 0,
                 getLastDocNum(),
                 getLastDocStatus(),
                 getLastDocUID(),
